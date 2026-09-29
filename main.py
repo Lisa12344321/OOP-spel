@@ -15,9 +15,13 @@ class Game():
     def setup(self):
         self.all_sprites = pygame.sprite.Group()
 
-        #spin knapp
+        #objekt
         self.spin_btn = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 80))
         
+        self.symbol1 = Symbol(self.all_sprites, pygame.Surface((100, 100)), (WINDOW_WIDTH/3, 100), 5)
+        
+        
+        self.slot_machine = SlotMachine()
 
     def run(self):
 
@@ -27,9 +31,11 @@ class Game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
+                #om man klickar på spinknappen
                 if event.type == pygame.MOUSEBUTTONUP:
                     if self.spin_btn.rect.collidepoint(event.pos):
-                        pass
+                        self.slot_machine.spin()
 
 
             #draw
