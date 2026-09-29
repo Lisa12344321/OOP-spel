@@ -1,4 +1,5 @@
 import pygame
+from klasser import *
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 500
 
@@ -11,8 +12,11 @@ class Game():
         self.running = True
         self.setup()
 
-    def setup():
-        pass
+    def setup(self):
+        self.all_sprites = pygame.sprite.Group()
+
+        #spin knapp
+        self.spin_btn = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 80))
         
 
     def run(self):
@@ -23,12 +27,17 @@ class Game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if self.spin_btn.rect.collidepoint(event.pos):
+                        pass
 
 
             #draw
             self.screen.fill("black")
+            self.all_sprites.draw(self.screen)
 
             #update
+            self.all_sprites.update()
             pygame.display.update()
 
         pygame.quit()
