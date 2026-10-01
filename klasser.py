@@ -7,9 +7,22 @@ class Sprite(pygame.sprite.Sprite):
         self.image.fill("green")
         self.rect = self.image.get_frect(center = pos)
 
+class Player():
+    def __init__(self, balance):
+        self.__balance = balance
+
+    def get_balance(self):
+        return self.__balance
+
+    def check_balance(self, amount):
+        pass
+
+    
+
+
 class SlotMachine():
-    def __init__(self, slots):
-        self.slots = slots
+    def __init__(self):
+        pass
 
     def spin(self):
         print("ja")
@@ -27,3 +40,4 @@ class Symbol(Sprite):
 
     def get_value(self):
         return self.__value
+        
