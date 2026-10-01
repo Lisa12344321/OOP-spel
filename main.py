@@ -1,7 +1,5 @@
 import pygame
 from klasser import *
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 500
 
 class Game():
     def __init__(self):
@@ -14,12 +12,20 @@ class Game():
 
     def setup(self):
         self.all_sprites = pygame.sprite.Group()
+        self.symbol_sprites = pygame.sprite.Group()
 
         #objekt
-        self.spin_btn = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 80))
+        self.spin_btn = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 80), "green")
+
+        self.player = Player(1000)
+
+        # self.symbol1 = Symbol(self.symbol_sprites, pygame.Surface((50, 50)), (0,0), "red", 5)
+        # self.symbol2 = Symbol(self.symbol_sprites, pygame.Surface((50, 50)), (0,0), "blue", 10)
+        # self.symbol3 = Symbol(self.symbol_sprites, pygame.Surface((50, 50)), (0,0), "yellow", 15)
+        # self.symbol4 = Symbol(self.symbol_sprites, pygame.Surface((50, 50)), (0,0), "green", 20)
+        # self.symbols = [self.symbol1, self.symbol2, self.symbol3, self.symbol4]
         
-        
-        self.slot_machine = SlotMachine()
+        self.slot_machine = SlotMachine(self.symbol_sprites)
 
     def run(self):
 
@@ -39,9 +45,12 @@ class Game():
             #draw
             self.screen.fill("black")
             self.all_sprites.draw(self.screen)
+            self.symbol_sprites.draw(self.screen)
 
             #update
             self.all_sprites.update()
+            self.symbol_sprites.update()
+
             pygame.display.update()
 
         pygame.quit()
