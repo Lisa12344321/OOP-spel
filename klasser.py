@@ -7,8 +7,12 @@ class Sprite(pygame.sprite.Sprite):
     def __init__(self, groups, image, pos, color):
         super().__init__(groups)
         self.image = image
-        self.image.fill(color)
+        self.color = color
+        self.image.fill(self.color)
         self.rect = self.image.get_frect(center = pos)
+
+    def update(self):
+        self.image.fill(self.color)
 
 class Player():
     def __init__(self, balance):
