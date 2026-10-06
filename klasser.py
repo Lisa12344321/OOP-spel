@@ -20,12 +20,17 @@ class Player():
     def check_balance(self, amount):
         pass
 
+    def increase_balance(self, amount):
+        self.__balance += amount
+
 
 class SlotMachine():
-    def __init__(self, symbol_sprites):
+    def __init__(self, symbol_sprites, player):
         self.symbol_sprites = symbol_sprites
-        self.symbols = [(1, "green"), (2, "yellow"), (3, "blue"), (4, "red")]
+        self.player = player
+        self.symbols = [(5, "green"), (10, "yellow"), (15, "blue"), (20, "red")]
         self.result = []
+        self.amount = 0
 
 
     def spin(self):
@@ -37,13 +42,31 @@ class SlotMachine():
             self.result.append(choice(self.symbols))
         print(self.result)
         self.show_result()
+        self.get_result()
         
 
     def get_result(self):
-        return self.result
+        if self.result[0] == self.result[1] == self.result[2]:
+            self.amount = 0
+            for symbol in self.symbol_sprites:
+                self.amount += symbol.get_value()
+            self.amount *= 10
+
+
+        elif self.result[0] == self.result[1]:
+            pass
+        elif self.result[0] == self.result[2]:
+            pass
+        elif self.result[1] == self.result[2]:
+            pass
+        else:
+            print("inget")
+
+        self.player.increase_balance(self.amount)
+        
 
     def show_result(self):
-        x = WINDOW_WIDTH / 3 - 100
+        x = WINDOW_WIDTH / 3
         for symbol in self.result:
             Symbol(self.symbol_sprites, pygame.Surface((50, 50)), (x, 100), symbol[1], symbol[0])
             x += 100

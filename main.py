@@ -14,6 +14,10 @@ class Game():
         self.all_sprites = pygame.sprite.Group()
         self.symbol_sprites = pygame.sprite.Group()
 
+        self.font = pygame.font.Font(None, 30)
+
+
+
         #objekt
         self.spin_btn = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 80), "green")
 
@@ -25,7 +29,11 @@ class Game():
         # self.symbol4 = Symbol(self.symbol_sprites, pygame.Surface((50, 50)), (0,0), "green", 20)
         # self.symbols = [self.symbol1, self.symbol2, self.symbol3, self.symbol4]
         
-        self.slot_machine = SlotMachine(self.symbol_sprites)
+        self.slot_machine = SlotMachine(self.symbol_sprites, self.player)
+
+        self.money_text = self.font.render(f"{self.player.get_balance()}", True, "white")
+        self.money_rect = self.money_text.get_frect(center = (WINDOW_WIDTH/2, WINDOW_HEIGHT - 30))
+        
 
     def run(self):
 
@@ -46,10 +54,12 @@ class Game():
             self.screen.fill("black")
             self.all_sprites.draw(self.screen)
             self.symbol_sprites.draw(self.screen)
-
+            self.screen.blit(self.money_text, self.money_rect)
+            
             #update
             self.all_sprites.update()
             self.symbol_sprites.update()
+            self.money_text = self.font.render(f"{self.player.get_balance()}", True, "white")
 
             pygame.display.update()
 
