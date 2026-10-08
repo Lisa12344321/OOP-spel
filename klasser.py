@@ -28,6 +28,7 @@ class Player():
 
     def change_balance(self, amount):
         self.__balance += int(amount)
+        self.__balance = max(0, self.__balance)
 
 
 class SlotMachine():
@@ -65,13 +66,13 @@ class SlotMachine():
             print(self.amount)
 
         elif self.result[0] == self.result[1]:
-            if bet > 1: self.amount = -bet / 2
+            if bet > 1: self.amount = -self.symbol_group[0].get_value() *2
             else: self.amount = -bet
         elif self.result[0] == self.result[2]:
-            if bet > 1: self.amount = -bet / 2
+            if bet > 1: self.amount = -self.symbol_group[0].get_value() *2
             else: self.amount = -bet
         elif self.result[1] == self.result[2]:
-            if bet > 1: self.amount = -bet / 2
+            if bet > 1: self.amount = -self.symbol_group[0].get_value() *2
             else: self.amount = -bet
         else:
             print("inget")
