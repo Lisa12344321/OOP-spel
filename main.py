@@ -1,4 +1,5 @@
 import pygame
+import string
 from klasser import *
 
 class Game():
@@ -33,7 +34,7 @@ class Game():
         #skrivfält
         self.user_text = ""
 
-        self.active_color = "white"
+        self.active_color = "darkgrey"
         self.passive_color = "grey"
 
         self.input_box = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 150), self.passive_color)
@@ -52,7 +53,9 @@ class Game():
                 #om man klickar på spinknappen
                 if event.type == pygame.MOUSEBUTTONUP:
                     if self.spin_btn.rect.collidepoint(event.pos):
-                        self.slot_machine.spin()
+                        if self.user_text:
+                            if self.player.check_balance(self.user_text):
+                                self.slot_machine.spin(self.user_text)
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.input_box.rect.collidepoint(event.pos):
@@ -62,11 +65,14 @@ class Game():
                         self.input_active = False
                         self.input_box.color = self.passive_color
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_BACKSPACE:
-                        self.user_text = self.user_text[:-1]
-                    else:
-                        self.user_text += event.unicode
+                if self.input_active:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_BACKSPACE:
+                            self.user_text = self.user_text[:-1]
+                        else:
+                            if len(self.user_text) < 10:
+                                if event.unicode in string.digits:
+                                    self.user_text += event.unicode
 
 
             #draw
@@ -81,7 +87,6 @@ class Game():
             self.symbol_sprites.update()
             self.money_text = self.font.render(f"{self.player.get_balance()}", True, "white")
             self.input_text = self.font.render(self.user_text, True, "white")
-
             pygame.display.update()
 
         pygame.quit()

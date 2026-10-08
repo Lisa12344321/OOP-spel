@@ -21,8 +21,10 @@ class Player():
     def get_balance(self):
         return self.__balance
 
-    def check_balance(self, amount):
-        pass
+    def check_balance(self, user_text):
+        bet = int(user_text)
+        if 0 < bet <= self.__balance: return True
+        else: return False
 
     def increase_balance(self, amount):
         self.__balance += amount
@@ -35,9 +37,11 @@ class SlotMachine():
         self.symbols = [(5, "green"), (10, "yellow"), (15, "blue"), (20, "red")]
         self.result = []
         self.amount = 0
+        
 
 
-    def spin(self):
+    def spin(self, user_text):
+        bet = int(user_text)
         for symbol in self.symbol_sprites:
             symbol.kill()
 
@@ -46,15 +50,16 @@ class SlotMachine():
             self.result.append(choice(self.symbols))
         print(self.result)
         self.show_result()
-        self.get_result()
+        self.get_result(bet)
         
 
-    def get_result(self):
+    def get_result(self, bet):
+        self.amount = 0
+
         if self.result[0] == self.result[1] == self.result[2]:
-            self.amount = 0
             for symbol in self.symbol_sprites:
-                self.amount += symbol.get_value()
-            self.amount *= 10
+                value = symbol.get_value()
+            self.amount = bet * value
 
 
         elif self.result[0] == self.result[1]:
