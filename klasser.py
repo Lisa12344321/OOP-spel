@@ -26,8 +26,8 @@ class Player():
         if 0 < bet <= self.__balance: return True
         else: return False
 
-    def increase_balance(self, amount):
-        self.__balance += amount
+    def change_balance(self, amount):
+        self.__balance += int(amount)
 
 
 class SlotMachine():
@@ -35,6 +35,7 @@ class SlotMachine():
         self.symbol_sprites = symbol_sprites
         self.player = player
         self.symbols = [(5, "green"), (10, "yellow"), (15, "blue"), (20, "red")]
+        self.symbol_group = []
         self.result = []
         self.amount = 0
         
@@ -55,23 +56,29 @@ class SlotMachine():
 
     def get_result(self, bet):
         self.amount = 0
+        self.symbol_group = []
+        for symbol in self.symbol_sprites:
+            self.symbol_group.append(symbol)
 
         if self.result[0] == self.result[1] == self.result[2]:
-            for symbol in self.symbol_sprites:
-                value = symbol.get_value()
-            self.amount = bet * value
-
+            self.amount = bet * self.symbol_group[0].get_value()
+            print(self.amount)
 
         elif self.result[0] == self.result[1]:
-            pass
+            if bet > 1: self.amount = -bet / 2
+            else: self.amount = -bet
         elif self.result[0] == self.result[2]:
-            pass
+            if bet > 1: self.amount = -bet / 2
+            else: self.amount = -bet
         elif self.result[1] == self.result[2]:
-            pass
+            if bet > 1: self.amount = -bet / 2
+            else: self.amount = -bet
         else:
             print("inget")
+            self.amount = -bet
 
-        self.player.increase_balance(self.amount)
+
+        self.player.change_balance(self.amount)
         
 
     def show_result(self):
