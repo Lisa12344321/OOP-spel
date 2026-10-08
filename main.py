@@ -37,8 +37,10 @@ class Game():
         self.active_color = "darkgrey"
         self.passive_color = "grey"
 
-        self.input_box = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 150), self.passive_color)
+        self.input_box = Sprite(self.all_sprites, pygame.Surface((130, 40)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 150), self.passive_color)
         self.input_text = self.font.render(self.user_text, True, "white")
+
+        self.input_empty_text = self.font.render("Bet here", True, "white")
         
         self.input_active = False
     def run(self):
@@ -80,7 +82,11 @@ class Game():
             self.all_sprites.draw(self.screen)
             self.symbol_sprites.draw(self.screen)
             self.screen.blit(self.money_text, self.money_rect)
-            self.screen.blit(self.input_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 5))
+            self.screen.blit(self.input_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
+
+            if not self.input_active and not self.user_text:
+                self.screen.blit(self.input_empty_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
+
             
             #update
             self.all_sprites.update()

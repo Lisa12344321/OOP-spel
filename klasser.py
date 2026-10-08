@@ -1,5 +1,6 @@
 import pygame
 from random import choice
+from os.path import join
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 500
 
@@ -8,11 +9,13 @@ class Sprite(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = image
         self.color = color
-        self.image.fill(self.color)
+        if self.color:
+            self.image.fill(self.color)
         self.rect = self.image.get_frect(center = pos)
 
     def update(self):
-        self.image.fill(self.color)
+        if self.color:
+            self.image.fill(self.color)
 
 class Player():
     def __init__(self, balance):
@@ -72,7 +75,7 @@ class SlotMachine():
             if bet > 1: self.amount = -self.symbol_group[0].get_value() *2
             else: self.amount = -bet
         elif self.result[1] == self.result[2]:
-            if bet > 1: self.amount = -self.symbol_group[0].get_value() *2
+            if bet > 1: self.amount = -self.symbol_group[1].get_value() *2
             else: self.amount = -bet
         else:
             print("inget")
