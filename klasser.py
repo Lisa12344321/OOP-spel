@@ -38,11 +38,11 @@ class SlotMachine():
     def __init__(self, symbol_sprites, player):
         self.symbol_sprites = symbol_sprites
         self.player = player
-        self.symbols = [(5, "green"), (10, "yellow"), (15, "blue"), (20, "red")]
+        self.symbol_types = [Symbol1, Symbol2, Symbol3, Symbol4]
         self.symbol_group = []
         self.result = []
         self.amount = 0
-        
+
 
 
     def spin(self, user_text):
@@ -52,11 +52,11 @@ class SlotMachine():
 
         self.result = []
         for i in range(3):
-            self.result.append(choice(self.symbols))
-        print(self.result)
+            self.result.append(choice(self.symbol_types))
+
         self.show_result()
         self.get_result(bet)
-        
+
 
     def get_result(self, bet):
         self.amount = 0
@@ -64,38 +64,61 @@ class SlotMachine():
         for symbol in self.symbol_sprites:
             self.symbol_group.append(symbol)
 
-        if self.result[0] == self.result[1] == self.result[2]:
-            self.amount = bet * self.symbol_group[0].get_value()
-            print(self.amount)
-
-        elif self.result[0] == self.result[1]:
-            if bet > 1: self.amount = -self.symbol_group[0].get_value() *2
+        if type(self.symbol_group[0]) == type(self.symbol_group[1]) == type(self.symbol_group[2]):
+            self.amount = bet * self.symbol_group[0].get_value()    
+        elif type(self.symbol_group[0]) == type(self.symbol_group[1]):
+            if bet > 1: self.amount = -bet/2
             else: self.amount = -bet
-        elif self.result[0] == self.result[2]:
-            if bet > 1: self.amount = -self.symbol_group[0].get_value() *2
+        elif type(self.symbol_group[0]) == type(self.symbol_group[2]):
+            if bet > 1: self.amount = -bet/2
             else: self.amount = -bet
-        elif self.result[1] == self.result[2]:
-            if bet > 1: self.amount = -self.symbol_group[1].get_value() *2
+        elif type(self.symbol_group[1]) == type(self.symbol_group[2]):
+            if bet > 1: self.amount = -bet/2
             else: self.amount = -bet
         else:
             print("inget")
             self.amount = -bet
 
-
         self.player.change_balance(self.amount)
-        
+
 
     def show_result(self):
         x = WINDOW_WIDTH / 3
-        for symbol in self.result:
-            Symbol(self.symbol_sprites, pygame.Surface((50, 50)), (x, 100), symbol[1], symbol[0])
+        for symbol_type in self.result:
+            symbol_type(self.symbol_sprites, pygame.Surface((50, 50)), (x, 100), self.get_color(symbol_type))
             x += 100
 
+
+    def get_color(self, symbol_type):
+        colors = {
+            Symbol1: "green",
+            Symbol2: "yellow",
+            Symbol3: "blue",
+            Symbol4: "red"
+        }
+        return colors[symbol_type]
+
+
 class Symbol(Sprite):
-    def __init__(self, groups, image, pos, color, value):
+    def __init__(self, groups, image, pos, color):
         super().__init__(groups, image, pos, color)
-        self.__value = value
 
     def get_value(self):
-        return self.__value
-        
+        return 0
+
+
+class Symbol1(Symbol):
+    def get_value(self):
+        return 2
+
+class Symbol2(Symbol):
+    def get_value(self):
+        return 5
+
+class Symbol3(Symbol):
+    def get_value(self):
+        return 10
+
+class Symbol4(Symbol):
+    def get_value(self):
+        return 15
