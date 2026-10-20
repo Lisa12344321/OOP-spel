@@ -27,9 +27,7 @@ class Game():
         self.slot_machine = SlotMachine(self.symbol_sprites, self.player)
 
         #pengar text
-        self.money_text = self.font.render(f"{self.player.get_balance()}", True, "white")
-        self.money_rect = self.money_text.get_frect(center = (WINDOW_WIDTH/2, WINDOW_HEIGHT - 30))
-
+        self.money_text = Text(self.font, f"{self.player.get_balance()}", True, "white", (WINDOW_WIDTH/2, WINDOW_HEIGHT - 30))
 
         #skrivfält
         self.user_text = ""
@@ -43,6 +41,10 @@ class Game():
         self.input_empty_text = self.font.render("Bet here", True, "white")
         
         self.input_active = False
+
+        self.text_sprites = [self.money_text]
+
+
     def run(self):
 
         while self.running:
@@ -81,17 +83,18 @@ class Game():
             self.screen.fill("black")
             self.all_sprites.draw(self.screen)
             self.symbol_sprites.draw(self.screen)
-            self.screen.blit(self.money_text, self.money_rect)
+            for text in self.text_sprites:
+                text.draw()
             self.screen.blit(self.input_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
 
             if not self.input_active and not self.user_text:
                 self.screen.blit(self.input_empty_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
-
             
             #update
             self.all_sprites.update()
             self.symbol_sprites.update()
-            self.money_text = self.font.render(f"{self.player.get_balance()}", True, "white")
+            self.money_text.update_text(f"{self.player.get_balance()}")
+            
             self.input_text = self.font.render(self.user_text, True, "white")
             pygame.display.update()
 

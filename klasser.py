@@ -80,6 +80,11 @@ class SlotMachine():
             self.amount = -bet
 
         self.player.change_balance(self.amount)
+        if self.amount > bet:
+            text = f"Du vann {self.amount} kr"
+        else:
+            text = f"Du förlorade {self.amount} kr"
+            
 
 
     def show_result(self):
@@ -122,3 +127,24 @@ class Symbol3(Symbol):
 class Symbol4(Symbol):
     def get_value(self):
         return 15
+
+
+class Text():
+    def __init__(self, font, text, antialias, color, pos):
+        self.screen = pygame.display.get_surface()
+
+        self.font = font
+        self.text = text
+        self.antialias = antialias
+        self.color = color
+        self.pos = pos
+
+        self.text_surf = font.render(self.text, self.antialias, self.color)
+        self.rect = self.text_surf.get_frect(center = self.pos)
+
+    def update_text(self, text):
+        self.text_surf = self.font.render(text, self.antialias, self.color)
+
+    def draw(self):
+        self.screen.blit(self.text_surf, self.rect)
+        
