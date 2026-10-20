@@ -1,5 +1,5 @@
 import pygame
-from random import choice
+from random import choice, randint
 from os.path import join
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 500
@@ -35,8 +35,10 @@ class Player():
 
 
 class SlotMachine():
-    def __init__(self, symbol_sprites, player):
+    def __init__(self, symbol_sprites, player, font, text_sprites):
+        self.text_sprites = text_sprites
         self.symbol_sprites = symbol_sprites
+        self.font = font
         self.player = player
         self.symbol_types = [Symbol1, Symbol2, Symbol3, Symbol4]
         self.symbol_group = []
@@ -80,11 +82,17 @@ class SlotMachine():
             self.amount = -bet
 
         self.player.change_balance(self.amount)
+        self.text(bet)
+
+    def text(self, bet):
         if self.amount > bet:
-            text = f"Du vann {self.amount} kr"
+            text = f"+{self.amount}"
         else:
-            text = f"Du förlorade {self.amount} kr"
-            
+            text = f"{self.amount}"
+
+        amount_text = Text(self.font, text, True, "white", (randint(30, WINDOW_WIDTH -30), WINDOW_HEIGHT - 30))
+        self.text_sprites.append(amount_text)
+
 
 
     def show_result(self):

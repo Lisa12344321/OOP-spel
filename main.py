@@ -14,20 +14,25 @@ class Game():
     def setup(self):
         self.all_sprites = pygame.sprite.Group()
         self.symbol_sprites = pygame.sprite.Group()
+        self.text_sprites = []
 
         self.font = pygame.font.Font(None, 30)
 
-
-
+        
+        
         #objekt
         self.spin_btn = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 80), "green")
 
         self.player = Player(1000)
 
-        self.slot_machine = SlotMachine(self.symbol_sprites, self.player)
+        self.slot_machine = SlotMachine(self.symbol_sprites, self.player, self.font, self.text_sprites)
+
+
+        
 
         #pengar text
         self.money_text = Text(self.font, f"{self.player.get_balance()}", True, "white", (WINDOW_WIDTH/2, WINDOW_HEIGHT - 30))
+        self.text_sprites.append(self.money_text)
 
         #skrivfält
         self.user_text = ""
@@ -42,8 +47,10 @@ class Game():
         
         self.input_active = False
 
-        self.text_sprites = [self.money_text]
 
+
+
+        
 
     def run(self):
 
