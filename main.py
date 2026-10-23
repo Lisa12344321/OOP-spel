@@ -20,10 +20,14 @@ class Game():
         self.font = pygame.font.Font(None, 30)
         self.small_font = pygame.font.Font(None, 20)
 
-        
+        #bilder
+        self.slot_machine_image = pygame.image.load(join("images", "slot-machine.png")).convert_alpha()
+        self.spin_btn_image = pygame.image.load(join("images", "spin-knapp.png")).convert_alpha()
         
         #objekt
-        self.spin_btn = Sprite(self.all_sprites, pygame.Surface((130, 50)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 80), "green")
+        self.slot_machine_sprite = Sprite(self.all_sprites, self.slot_machine_image, (WINDOW_WIDTH/2, WINDOW_HEIGHT/2), None)
+
+        self.spin_btn = Sprite(self.all_sprites, self.spin_btn_image, (430, 385), None)
 
         self.player = Player(1000)
 
@@ -42,7 +46,7 @@ class Game():
         self.active_color = "darkgrey"
         self.passive_color = "grey"
 
-        self.input_box = Sprite(self.all_sprites, pygame.Surface((130, 40)), (WINDOW_WIDTH/2, WINDOW_HEIGHT - 150), self.passive_color)
+        self.input_box = Sprite(self.all_sprites, pygame.Surface((200, 40)), (220, 385), self.passive_color)
         self.input_text = self.font.render(self.user_text, True, "white")
 
         self.input_empty_text = self.font.render("Bet here", True, "white")
@@ -90,8 +94,9 @@ class Game():
 
             #draw
             self.screen.fill("black")
-            self.all_sprites.draw(self.screen)
             self.symbol_sprites.draw(self.screen)
+            self.all_sprites.draw(self.screen)
+            
             for text in self.text_sprites:
                 text.draw(dt)
             self.screen.blit(self.input_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
@@ -100,8 +105,8 @@ class Game():
                 self.screen.blit(self.input_empty_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
             
             #update
-            self.all_sprites.update()
             self.symbol_sprites.update()
+            self.all_sprites.update()
             self.money_text.update_text(f"{self.player.get_balance()} $")
             
             self.input_text = self.font.render(self.user_text, True, "white")

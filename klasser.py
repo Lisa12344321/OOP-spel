@@ -17,6 +17,8 @@ class Sprite(pygame.sprite.Sprite):
         if self.color:
             self.image.fill(self.color)
 
+    
+
 class Player():
     def __init__(self, balance):
         self.__balance = balance
@@ -75,7 +77,7 @@ class SlotMachine():
             
             self.amount = bet * self.symbol_group[0].get_value()
 
-            self.profit_text = Text(self.big_font, f"{bet} x {self.symbol_group[0].get_value()} $", True, "green", (WINDOW_WIDTH/2, WINDOW_HEIGHT/2), self.text_sprites)
+            self.profit_text = Text(self.big_font, f"{bet} x {self.symbol_group[0].get_value()} $", True, "green", (WINDOW_WIDTH/2, 80), self.text_sprites)
             self.profit_text.timer = True
             self.text_sprites.append(self.profit_text)
         
@@ -112,7 +114,7 @@ class SlotMachine():
     def show_result(self):
         x = WINDOW_WIDTH / 3
         for symbol_type in self.result:
-            symbol_type(self.symbol_sprites, pygame.Surface((50, 50)), (x, 100), self.get_color(symbol_type))
+            symbol_type(self.symbol_sprites, pygame.Surface((80, 110)), (x, 233), self.get_color(symbol_type))
             x += 100
 
 
