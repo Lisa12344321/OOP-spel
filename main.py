@@ -6,7 +6,7 @@ class Game():
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption("Spel")
+        pygame.display.set_caption("Gambling Simulator")
         self.clock = pygame.time.Clock()
         self.running = True
         self.setup()
@@ -23,6 +23,8 @@ class Game():
         #bilder
         self.slot_machine_image = pygame.image.load(join("images", "slot-machine.png")).convert_alpha()
         self.spin_btn_image = pygame.image.load(join("images", "spin-knapp.png")).convert_alpha()
+        self.spin_btn_down_image = pygame.image.load(join("images", "spin-knapp-ner.png")).convert_alpha()
+                
         
         #objekt
         self.slot_machine_sprite = Sprite(self.all_sprites, self.slot_machine_image, (WINDOW_WIDTH/2, WINDOW_HEIGHT/2), None)
@@ -43,10 +45,10 @@ class Game():
         #skrivfält
         self.user_text = ""
 
-        self.active_color = "darkgrey"
-        self.passive_color = "grey"
+        self.active_color = "#7a1e1f"
+        self.passive_color = "#950102"
 
-        self.input_box = Sprite(self.all_sprites, pygame.Surface((200, 40)), (220, 385), self.passive_color)
+        self.input_box = Sprite(self.all_sprites, pygame.Surface((170, 40)), (220, 385), self.passive_color)
         self.input_text = self.font.render(self.user_text, True, "white")
 
         self.input_empty_text = self.font.render("Bet here", True, "white")
@@ -68,11 +70,14 @@ class Game():
                     self.running = False
 
                 #om man klickar på spinknappen
-                if event.type == pygame.MOUSEBUTTONUP:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.spin_btn.rect.collidepoint(event.pos):
+                        self.spin_btn.image = self.spin_btn_down_image
                         if self.user_text:
                             if self.player.check_balance(self.user_text):
                                 self.slot_machine.spin(self.user_text, dt)
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.spin_btn.image = self.spin_btn_image
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.input_box.rect.collidepoint(event.pos):

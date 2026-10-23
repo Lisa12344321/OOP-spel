@@ -43,12 +43,16 @@ class SlotMachine():
         self.font = font
         self.big_font = big_font
         self.player = player
-        self.symbol_types = [Symbol1, Symbol2, Symbol3, Symbol4]
+        self.symbol_types = [Cherry, Lemon, Seven, Diamond]
         self.symbol_group = []
         self.result = []
         self.amount = 0
         self.profit_text = None
 
+        self.cherry_image = pygame.image.load(join("images", "cherry.jpg")).convert_alpha()
+        self.lemon_image = pygame.image.load(join("images", "lemon.jpg")).convert_alpha()
+        self.seven_image = pygame.image.load(join("images", "seven.jpg")).convert_alpha()
+        self.diamond_image = pygame.image.load(join("images", "diamond.jpg")).convert_alpha()
 
 
     def spin(self, user_text, dt):
@@ -112,18 +116,18 @@ class SlotMachine():
 
 
     def show_result(self):
-        x = WINDOW_WIDTH / 3
+        x = WINDOW_WIDTH / 2 - 90
         for symbol_type in self.result:
-            symbol_type(self.symbol_sprites, pygame.Surface((80, 110)), (x, 233), self.get_color(symbol_type))
-            x += 100
+            symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, 233), None)
+            x += 90
 
 
-    def get_color(self, symbol_type):
+    def get_image(self, symbol_type):
         colors = {
-            Symbol1: "green",
-            Symbol2: "yellow",
-            Symbol3: "blue",
-            Symbol4: "red"
+            Cherry: self.cherry_image,
+            Lemon: self.lemon_image,
+            Seven: self.seven_image,
+            Diamond: self.diamond_image
         }
         return colors[symbol_type]
 
@@ -136,19 +140,19 @@ class Symbol(Sprite):
         return 0
 
 
-class Symbol1(Symbol):
+class Cherry(Symbol):
     def get_value(self):
         return 2
 
-class Symbol2(Symbol):
+class Lemon(Symbol):
     def get_value(self):
         return 5
 
-class Symbol3(Symbol):
+class Seven(Symbol):
     def get_value(self):
         return 10
 
-class Symbol4(Symbol):
+class Diamond(Symbol):
     def get_value(self):
         return 15
 
@@ -170,7 +174,7 @@ class Text():
         self.can_move = False
         self.timer = None
         self.start_time = pygame.time.get_ticks() / 1000
-        self.y = randint(350, 450)
+        self.y = randint(300, 400)
 
     def move(self, dt):
         if self.rect.centery >= self.y:
