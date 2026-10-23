@@ -116,10 +116,10 @@ class SlotMachine():
 
 
     def show_result(self):
-        x = WINDOW_WIDTH / 2 - 90
+        x = WINDOW_WIDTH / 2 - 88
         for symbol_type in self.result:
             symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, 233), None)
-            x += 90
+            x += 88
 
 
     def get_image(self, symbol_type):
