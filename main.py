@@ -16,6 +16,7 @@ class Game():
         self.symbol_sprites = pygame.sprite.Group()
         self.text_sprites = []
 
+        self.big_font = pygame.font.Font(None, 60)
         self.font = pygame.font.Font(None, 30)
         self.small_font = pygame.font.Font(None, 20)
 
@@ -26,13 +27,13 @@ class Game():
 
         self.player = Player(1000)
 
-        self.slot_machine = SlotMachine(self.symbol_sprites, self.player, self.small_font, self.text_sprites)
+        self.slot_machine = SlotMachine(self.symbol_sprites, self.player, self.small_font, self.text_sprites, self.big_font)
 
 
         
 
         #pengar text
-        self.money_text = Text(self.font, f"{self.player.get_balance()}", True, "white", (WINDOW_WIDTH/2, WINDOW_HEIGHT - 30))
+        self.money_text = Text(self.font, f"{self.player.get_balance()} $", True, "white", (WINDOW_WIDTH/2, WINDOW_HEIGHT - 30), self.text_sprites)
         self.text_sprites.append(self.money_text)
 
         #skrivfält
@@ -101,7 +102,7 @@ class Game():
             #update
             self.all_sprites.update()
             self.symbol_sprites.update()
-            self.money_text.update_text(f"{self.player.get_balance()}")
+            self.money_text.update_text(f"{self.player.get_balance()} $")
             
             self.input_text = self.font.render(self.user_text, True, "white")
             pygame.display.update()

@@ -35,15 +35,17 @@ class Player():
 
 
 class SlotMachine():
-    def __init__(self, symbol_sprites, player, font, text_sprites):
+    def __init__(self, symbol_sprites, player, font, text_sprites, big_font):
         self.text_sprites = text_sprites
         self.symbol_sprites = symbol_sprites
         self.font = font
+        self.big_font = big_font
         self.player = player
         self.symbol_types = [Symbol1, Symbol2, Symbol3, Symbol4]
         self.symbol_group = []
         self.result = []
         self.amount = 0
+        self.profit_text = None
 
 
 
@@ -67,7 +69,16 @@ class SlotMachine():
             self.symbol_group.append(symbol)
 
         if type(self.symbol_group[0]) == type(self.symbol_group[1]) == type(self.symbol_group[2]):
-            self.amount = bet * self.symbol_group[0].get_value()    
+
+            if self.profit_text in self.text_sprites:
+                self.text_sprites.remove(self.profit_text)
+            
+            self.amount = bet * self.symbol_group[0].get_value()
+
+            self.profit_text = Text(self.big_font, f"{bet} x {self.symbol_group[0].get_value()} $", True, "green", (WINDOW_WIDTH/2, WINDOW_HEIGHT/2), self.text_sprites)
+            self.profit_text.timer = True
+            self.text_sprites.append(self.profit_text)
+        
         elif type(self.symbol_group[0]) == type(self.symbol_group[1]):
             if bet > 1: self.amount = -bet/2
             else: self.amount = -bet
@@ -86,11 +97,13 @@ class SlotMachine():
 
     def text(self, bet, dt):
         if self.amount > bet:
-            text = f"+{int(self.amount)}"
+            text = f"+{int(self.amount)} $"
+            color = "green"
         else:
-            text = f"{int(self.amount)}"
+            text = f"{int(self.amount)} $"
+            color = "white"
 
-        amount_text = Text(self.font, text, True, "white", (randint(30, WINDOW_WIDTH -30), WINDOW_HEIGHT - 30))
+        amount_text = Text(self.font, text, True, color, (randint(30, WINDOW_WIDTH -30), WINDOW_HEIGHT - 30), self.text_sprites)
         self.text_sprites.append(amount_text)
         amount_text.can_move = True
 
@@ -139,8 +152,9 @@ class Symbol4(Symbol):
 
 
 class Text():
-    def __init__(self, font, text, antialias, color, pos):
+    def __init__(self, font, text, antialias, color, pos, text_sprites):
         self.screen = pygame.display.get_surface()
+        self.text_sprites = text_sprites
 
         self.font = font
         self.text = text
@@ -152,12 +166,21 @@ class Text():
         self.rect = self.text_surf.get_frect(center = self.pos)
 
         self.can_move = False
+        self.timer = None
+        self.start_time = pygame.time.get_ticks() / 1000
+        self.y = randint(350, 450)
 
     def move(self, dt):
-        if self.rect.centery >= 350:
+        if self.rect.centery >= self.y:
             self.rect.centery -= 50 * dt
         else:
-            pass
+            self.text_sprites.remove(self)
+
+    def timer_alive(self):
+        timer = pygame.time.get_ticks() / 1000
+        time_alive = 3
+        if (timer - self.start_time) > time_alive:
+            self.text_sprites.remove(self)
 
     def update_text(self, text):
         self.text_surf = self.font.render(text, self.antialias, self.color)
@@ -168,6 +191,9 @@ class Text():
 
         if self.can_move:
             self.move(dt)
+
+        if self.timer:
+            self.timer_alive()
 
 
         
