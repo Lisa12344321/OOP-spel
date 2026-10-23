@@ -95,11 +95,11 @@ class SlotMachine():
             if bet > 1: self.amount = -bet/2
             else: self.amount = -bet
         else:
-            print("inget")
             self.amount = -bet
 
         self.player.change_balance(self.amount)
         self.text(bet, dt)
+
 
     def text(self, bet, dt):
         if self.amount > bet:
@@ -123,13 +123,13 @@ class SlotMachine():
 
 
     def get_image(self, symbol_type):
-        colors = {
+        images = {
             Cherry: self.cherry_image,
             Lemon: self.lemon_image,
             Seven: self.seven_image,
             Diamond: self.diamond_image
         }
-        return colors[symbol_type]
+        return images[symbol_type]
 
 
 class Symbol(Sprite):
