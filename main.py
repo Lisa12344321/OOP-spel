@@ -17,6 +17,7 @@ class Game():
         self.text_sprites = []
 
         self.font = pygame.font.Font(None, 30)
+        self.small_font = pygame.font.Font(None, 20)
 
         
         
@@ -25,7 +26,7 @@ class Game():
 
         self.player = Player(1000)
 
-        self.slot_machine = SlotMachine(self.symbol_sprites, self.player, self.font, self.text_sprites)
+        self.slot_machine = SlotMachine(self.symbol_sprites, self.player, self.small_font, self.text_sprites)
 
 
         
@@ -66,7 +67,7 @@ class Game():
                     if self.spin_btn.rect.collidepoint(event.pos):
                         if self.user_text:
                             if self.player.check_balance(self.user_text):
-                                self.slot_machine.spin(self.user_text)
+                                self.slot_machine.spin(self.user_text, dt)
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.input_box.rect.collidepoint(event.pos):
@@ -91,7 +92,7 @@ class Game():
             self.all_sprites.draw(self.screen)
             self.symbol_sprites.draw(self.screen)
             for text in self.text_sprites:
-                text.draw()
+                text.draw(dt)
             self.screen.blit(self.input_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
 
             if not self.input_active and not self.user_text:

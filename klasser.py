@@ -47,7 +47,7 @@ class SlotMachine():
 
 
 
-    def spin(self, user_text):
+    def spin(self, user_text, dt):
         bet = int(user_text)
         for symbol in self.symbol_sprites:
             symbol.kill()
@@ -57,10 +57,10 @@ class SlotMachine():
             self.result.append(choice(self.symbol_types))
 
         self.show_result()
-        self.get_result(bet)
+        self.get_result(bet, dt)
 
 
-    def get_result(self, bet):
+    def get_result(self, bet, dt):
         self.amount = 0
         self.symbol_group = []
         for symbol in self.symbol_sprites:
@@ -82,16 +82,17 @@ class SlotMachine():
             self.amount = -bet
 
         self.player.change_balance(self.amount)
-        self.text(bet)
+        self.text(bet, dt)
 
-    def text(self, bet):
+    def text(self, bet, dt):
         if self.amount > bet:
-            text = f"+{self.amount}"
+            text = f"+{int(self.amount)}"
         else:
-            text = f"{self.amount}"
+            text = f"{int(self.amount)}"
 
         amount_text = Text(self.font, text, True, "white", (randint(30, WINDOW_WIDTH -30), WINDOW_HEIGHT - 30))
         self.text_sprites.append(amount_text)
+        amount_text.can_move = True
 
 
 
@@ -150,9 +151,23 @@ class Text():
         self.text_surf = font.render(self.text, self.antialias, self.color)
         self.rect = self.text_surf.get_frect(center = self.pos)
 
+        self.can_move = False
+
+    def move(self, dt):
+        if self.rect.centery >= 350:
+            self.rect.centery -= 50 * dt
+        else:
+            pass
+
     def update_text(self, text):
         self.text_surf = self.font.render(text, self.antialias, self.color)
+        
 
-    def draw(self):
+    def draw(self, dt):
         self.screen.blit(self.text_surf, self.rect)
+
+        if self.can_move:
+            self.move(dt)
+
+
         
