@@ -13,11 +13,10 @@ class Sprite(pygame.sprite.Sprite):
             self.image.fill(self.color)
         self.rect = self.image.get_frect(center = pos)
 
-    def update(self):
+    def update(self, dt):
         if self.color:
             self.image.fill(self.color)
 
-    
 
 class Player():
     def __init__(self, balance):
@@ -55,36 +54,38 @@ class SlotMachine():
         self.diamond_image = pygame.image.load(join("images", "diamond.jpg")).convert_alpha()
 
 
-    def spin(self, user_text, dt):
-        bet = int(user_text)
+    def spin(self):
         for symbol in self.symbol_sprites:
             symbol.kill()
+        self.symbol_group.clear()
 
         self.result = []
+        #slumpar resultatet
         for i in range(3):
             self.result.append(choice(self.symbol_types))
 
         self.show_result()
-        self.get_result(bet, dt)
 
 
-    def get_result(self, bet, dt):
+    def get_result(self, user_text):
+        bet = int(user_text)
         self.amount = 0
-        self.symbol_group = []
-        for symbol in self.symbol_sprites:
-            self.symbol_group.append(symbol)
 
+        #om alla symboler är lika
         if type(self.symbol_group[0]) == type(self.symbol_group[1]) == type(self.symbol_group[2]):
 
             if self.profit_text in self.text_sprites:
                 self.text_sprites.remove(self.profit_text)
-            
+
+            #man får det man bettade gånger symbolernas värde
             self.amount = bet * self.symbol_group[0].get_value()
 
+            #stor text som visas i tre sek om man vinner
             self.profit_text = Text(self.big_font, f"{bet} x {self.symbol_group[0].get_value()} $", True, "green", (WINDOW_WIDTH/2, 80), self.text_sprites)
             self.profit_text.timer = True
             self.text_sprites.append(self.profit_text)
-        
+
+        #om två symboler är lika förlorar man hälften av det man bettade
         elif type(self.symbol_group[0]) == type(self.symbol_group[1]):
             if bet > 1: self.amount = -bet/2
             else: self.amount = -bet
@@ -95,13 +96,14 @@ class SlotMachine():
             if bet > 1: self.amount = -bet/2
             else: self.amount = -bet
         else:
+            #om inga symboler är lika förlorar man allt man bettade
             self.amount = -bet
 
         self.player.change_balance(self.amount)
-        self.text(bet, dt)
+        self.text(bet)
 
-
-    def text(self, bet, dt):
+    #de små texterna som rör sig uppåt
+    def text(self, bet):
         if self.amount > bet:
             text = f"+{int(self.amount)} $"
             color = "green"
@@ -116,9 +118,18 @@ class SlotMachine():
 
 
     def show_result(self):
+        
         x = WINDOW_WIDTH / 2 - 88
         for symbol_type in self.result:
-            symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, 233), None)
+            y = 346
+            symbol = symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, y), None, True) #själva "resultat-symbolen"
+            self.symbol_group.append(symbol)
+            index = (self.symbol_types.index(symbol_type) + 1) % 4
+
+            for i in range(3): #För varje "resultat-symbol" så blir det tre till symboler ovanför. Så det blir som ett "hjul" som snurrar
+                y -= 113
+                self.symbol_types[index](self.symbol_sprites, self.get_image(self.symbol_types[index]), (x, y), None, False)
+                index = (index + 1) % 4 #gör så att det inte blir flera av samma symbol på ett "hjul"
             x += 88
 
 
@@ -133,13 +144,44 @@ class SlotMachine():
 
 
 class Symbol(Sprite):
-    def __init__(self, groups, image, pos, color):
+    def __init__(self, groups, image, pos, color, in_result):
         super().__init__(groups, image, pos, color)
+        self.spin = True
+        self.speed = 500
+        self.reduce_speed = 20
+        self.in_result = in_result
 
     def get_value(self):
         return 0
 
+    def spin_animation(self, dt):
 
+        if self.speed > 0:
+            #först snurrar det snabbt och sen blir det saktare och saktare
+            self.rect.centery += self.speed * dt
+            self.speed += self.reduce_speed
+            self.reduce_speed -= 0.3
+        else:
+            #när de har stannat
+            if not self.in_result: #alla symboler som inte är "resultat-symbolerna" försvinner
+                self.kill()
+            else: #alla "resultat-symboler"
+                if not 226 <= self.rect.centery <= 240:
+                    #om en del av symbolen inte syns så ska den flytta sig upp eller ner
+                    if int(self.rect.centery) >= 240: self.rect.centery -= 200 * dt
+                    elif int(self.rect.centery) <= 226: self.rect.centery += 200 * dt
+                else:
+                    self.spin = False
+
+        #när symbolerna är för långt ner flyttas de upp igen, som en loop
+        if self.rect.top >= 402.5:
+            self.rect.bottom = -49.5
+    
+    def update(self, dt):
+        if self.spin:
+            self.spin_animation(dt)
+
+#alla symbolers värden
 class Cherry(Symbol):
     def get_value(self):
         return 2
@@ -176,12 +218,14 @@ class Text():
         self.start_time = pygame.time.get_ticks() / 1000
         self.y = randint(300, 400)
 
+    #för de små texterna som flyttas uppåt
     def move(self, dt):
         if self.rect.centery >= self.y:
             self.rect.centery -= 50 * dt
         else:
             self.text_sprites.remove(self)
 
+    #om man får tre lika visas en stor text i tre sek
     def timer_alive(self):
         timer = pygame.time.get_ticks() / 1000
         time_alive = 3
@@ -200,6 +244,5 @@ class Text():
 
         if self.timer:
             self.timer_alive()
-
 
         
