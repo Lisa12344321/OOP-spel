@@ -12,10 +12,12 @@ class Game():
         self.setup()
 
     def setup(self):
+        #grupper
         self.all_sprites = pygame.sprite.Group()
         self.symbol_sprites = pygame.sprite.Group()
         self.text_sprites = []
 
+        #fonts
         self.big_font = pygame.font.Font(None, 60)
         self.font = pygame.font.Font(None, 30)
         self.small_font = pygame.font.Font(None, 20)
@@ -28,15 +30,10 @@ class Game():
         
         #objekt
         self.slot_machine_sprite = Sprite(self.all_sprites, self.slot_machine_image, (WINDOW_WIDTH/2, WINDOW_HEIGHT/2), None)
-
         self.spin_btn = Sprite(self.all_sprites, self.spin_btn_image, (430, 385), None)
-
         self.player = Player(1000)
-
         self.slot_machine = SlotMachine(self.symbol_sprites, self.player, self.small_font, self.text_sprites, self.big_font)
 
-
-        
 
         #pengar text
         self.money_text = Text(self.font, f"{self.player.get_balance()} $", True, "white", (WINDOW_WIDTH/2, WINDOW_HEIGHT - 30), self.text_sprites)
@@ -45,20 +42,14 @@ class Game():
         #skrivfält
         self.user_text = ""
 
-        self.active_color = "#7a1e1f"
+        self.active_color = "#880002"
         self.passive_color = "#950102"
 
         self.input_box = Sprite(self.all_sprites, pygame.Surface((170, 40)), (220, 385), self.passive_color)
         self.input_text = self.font.render(self.user_text, True, "white")
-
         self.input_empty_text = self.font.render("Bet here", True, "white")
         
         self.input_active = False
-
-
-
-
-        
 
     def run(self):
 
@@ -68,18 +59,20 @@ class Game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
+                
                 #om man klickar på spinknappen
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.spin_btn.rect.collidepoint(event.pos):
                         self.spin_btn.image = self.spin_btn_down_image
-                        if self.user_text:
+                        if self.user_text: #om man har skrivit in nåt att betta
                             if self.player.check_balance(self.user_text):
+                                #kan bara spinna om inga symboler är i symbol_group
                                 if not self.slot_machine.symbol_group:
-                                    self.slot_machine.spin(self.user_text)
+                                    self.slot_machine.spin()
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.spin_btn.image = self.spin_btn_image
 
+                #om man klickar på skrivfältet
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.input_box.rect.collidepoint(event.pos):
                         self.input_active = True
@@ -88,12 +81,13 @@ class Game():
                         self.input_active = False
                         self.input_box.color = self.passive_color
 
+                #om man skriver i skrivfältet
                 if self.input_active:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_BACKSPACE:
                             self.user_text = self.user_text[:-1]
                         else:
-                            if len(self.user_text) < 10:
+                            if len(self.user_text) < 12:
                                 if event.unicode in string.digits:
                                     self.user_text += event.unicode
 
@@ -115,7 +109,7 @@ class Game():
             self.all_sprites.update(dt)
 
             if self.slot_machine.symbol_group:
-                if not self.slot_machine.symbol_group[0].spin:
+                if not self.slot_machine.symbol_group[0].spin: #om symbolerna inte spinnar längre så beräknas resultatet
                     self.slot_machine.get_result(self.user_text)
                     self.slot_machine.symbol_group.clear()
 
@@ -130,7 +124,3 @@ game = Game()
 
 if __name__ == "__main__":
     game.run()
-
-
-
-
