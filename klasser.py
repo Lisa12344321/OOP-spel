@@ -13,7 +13,7 @@ class Sprite(pygame.sprite.Sprite):
             self.image.fill(self.color)
         self.rect = self.image.get_frect(center = pos)
 
-    def update(self):
+    def update(self, dt):
         if self.color:
             self.image.fill(self.color)
 
@@ -55,7 +55,7 @@ class SlotMachine():
         self.diamond_image = pygame.image.load(join("images", "diamond.jpg")).convert_alpha()
 
 
-    def spin(self, user_text, dt):
+    def spin(self, user_text):
         bet = int(user_text)
         for symbol in self.symbol_sprites:
             symbol.kill()
@@ -65,10 +65,10 @@ class SlotMachine():
             self.result.append(choice(self.symbol_types))
 
         self.show_result()
-        self.get_result(bet, dt)
+        self.get_result(bet)
 
 
-    def get_result(self, bet, dt):
+    def get_result(self, bet):
         self.amount = 0
         self.symbol_group = []
         for symbol in self.symbol_sprites:
@@ -98,10 +98,10 @@ class SlotMachine():
             self.amount = -bet
 
         self.player.change_balance(self.amount)
-        self.text(bet, dt)
+        self.text(bet)
 
 
-    def text(self, bet, dt):
+    def text(self, bet):
         if self.amount > bet:
             text = f"+{int(self.amount)} $"
             color = "green"
@@ -116,11 +116,15 @@ class SlotMachine():
 
 
     def show_result(self):
+        symbols = []
+
         x = WINDOW_WIDTH / 2 - 88
         for symbol_type in self.result:
-            symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, 233), None)
+            symbol = symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, 233), None)
+            symbols.append(symbol)
             x += 88
 
+            
 
     def get_image(self, symbol_type):
         images = {
@@ -135,9 +139,27 @@ class SlotMachine():
 class Symbol(Sprite):
     def __init__(self, groups, image, pos, color):
         super().__init__(groups, image, pos, color)
+        self.spin = True
+        self.speed = 500
+        self.reduce_speed = 20
 
     def get_value(self):
         return 0
+
+    def spin_animation(self, dt):
+        print(self.rect.centery)
+        if self.speed > 0:
+            self.rect.centery += self.speed * dt
+            self.speed += self.reduce_speed
+            self.reduce_speed -= 0.2
+
+
+        if self.rect.centery >= 350:
+            self.rect.centery = 120
+    
+    def update(self, dt):
+        if self.spin:
+            self.spin_animation(dt)
 
 
 class Cherry(Symbol):

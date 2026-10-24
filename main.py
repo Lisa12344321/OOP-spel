@@ -75,7 +75,7 @@ class Game():
                         self.spin_btn.image = self.spin_btn_down_image
                         if self.user_text:
                             if self.player.check_balance(self.user_text):
-                                self.slot_machine.spin(self.user_text, dt)
+                                self.slot_machine.spin(self.user_text)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.spin_btn.image = self.spin_btn_image
 
@@ -110,8 +110,8 @@ class Game():
                 self.screen.blit(self.input_empty_text, (self.input_box.rect.x + 5, self.input_box.rect.y + 10))
             
             #update
-            self.symbol_sprites.update()
-            self.all_sprites.update()
+            self.symbol_sprites.update(dt)
+            self.all_sprites.update(dt)
             self.money_text.update_text(f"{self.player.get_balance()} $")
             
             self.input_text = self.font.render(self.user_text, True, "white")
