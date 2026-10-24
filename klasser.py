@@ -59,20 +59,18 @@ class SlotMachine():
         bet = int(user_text)
         for symbol in self.symbol_sprites:
             symbol.kill()
+        self.symbol_group.clear()
 
         self.result = []
         for i in range(3):
             self.result.append(choice(self.symbol_types))
 
         self.show_result()
-        self.get_result(bet)
 
 
-    def get_result(self, bet):
+    def get_result(self, user_text):
+        bet = int(user_text)
         self.amount = 0
-        self.symbol_group = []
-        for symbol in self.symbol_sprites:
-            self.symbol_group.append(symbol)
 
         if type(self.symbol_group[0]) == type(self.symbol_group[1]) == type(self.symbol_group[2]):
 
@@ -116,13 +114,20 @@ class SlotMachine():
 
 
     def show_result(self):
-        symbols = []
-
+        
         x = WINDOW_WIDTH / 2 - 88
         for symbol_type in self.result:
-            symbol = symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, 233), None)
-            symbols.append(symbol)
+            y = 346
+            symbol = symbol_type(self.symbol_sprites, self.get_image(symbol_type), (x, y), None, True)
+            self.symbol_group.append(symbol)
+            index = (self.symbol_types.index(symbol_type) + 1) % 4
+
+            for i in range(3):
+                y -= 113
+                self.symbol_types[index](self.symbol_sprites, self.get_image(self.symbol_types[index]), (x, y), None, False)
+                index = (index + 1) % 4
             x += 88
+
 
             
 
@@ -137,25 +142,35 @@ class SlotMachine():
 
 
 class Symbol(Sprite):
-    def __init__(self, groups, image, pos, color):
+    def __init__(self, groups, image, pos, color, in_result):
         super().__init__(groups, image, pos, color)
         self.spin = True
         self.speed = 500
         self.reduce_speed = 20
+        self.in_result = in_result
 
     def get_value(self):
         return 0
 
     def spin_animation(self, dt):
-        print(self.rect.centery)
+
         if self.speed > 0:
             self.rect.centery += self.speed * dt
             self.speed += self.reduce_speed
-            self.reduce_speed -= 0.2
+            self.reduce_speed -= 0.3
+        else:
+            if not self.in_result:
+                self.kill()
+            else:
+                if not 230 < self.rect.centery < 236:
+                    if int(self.rect.centery) > 236: self.rect.centery -= 200 * dt
+                    elif int(self.rect.centery) < 230: self.rect.centery += 200 * dt
+                else:
+                    self.spin = False
 
 
-        if self.rect.centery >= 350:
-            self.rect.centery = 120
+        if self.rect.top >= 402.5:
+            self.rect.bottom = -49.5
     
     def update(self, dt):
         if self.spin:
